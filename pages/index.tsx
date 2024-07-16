@@ -1,3 +1,5 @@
+'use client';
+
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { NextPage } from "next";
@@ -6,6 +8,8 @@ import registerContractInfo from "@/lib/constants/contract/ETHRegistrarControlle
 import { useState } from "react";
 import { CheckIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import EnsAddress from "@/components/EnsAddress";
+import { Button } from "@/components/ui/button";
 
 const Home: NextPage = () => {
   const [name, setName] = useState("");
@@ -19,7 +23,6 @@ const Home: NextPage = () => {
       staleTime: 1000,
     },
   });
-
   return (
     <div className="flex items-center justify-center w-full h-screen">
       <div className="flex flex-col w-full gap-4 px-4 max-w-80">
@@ -58,6 +61,8 @@ const Home: NextPage = () => {
             )}
           </>
         </div>
+        {!!name && name.length > 2 && (
+        <EnsAddress address={name}/>)}
         <div className="h-24"></div>
       </div>
     </div>
