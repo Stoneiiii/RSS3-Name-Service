@@ -17,6 +17,8 @@ import registerContractInfo from "@/lib/constants/contract/ETHRegistrarControlle
 import resolverContractInfo from "@/lib/constants/contract/PublicResolver.json";
 import crypto from "crypto";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Slider, Typography } from "@ensdomains/thorin";
+import DurationPicker from "@/components/DurationPicker";
 
 const DAYS = 24 * 60 * 60;
 
@@ -75,55 +77,66 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-screen">
-      <Card className="w-[350px]">
-        <CardHeader>
-          <CardTitle>Register your RSS3 ID</CardTitle>
-          <CardDescription>Get your ID in one-click.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="grid items-center w-full gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  placeholder="Name of your project"
-                  disabled
-                />
+    <div className="flex-col items-center justify-center w-full h-screen pt-10 bg-gray-50">
+      <Typography
+        className="w-2/3 mx-auto pl-3"
+        fontVariant="extraLargeBold"
+        style={{ fontSize: "32px", paddingTop: "20px", paddingBottom: "20px" }}
+      >
+        {name}.rss3
+      </Typography>
+      <div className="flex items-center justify-center w-full pt-4">
+        <Card className="w-2/3 px-8">
+          <CardHeader>
+            <CardTitle className="text-4xl">Register {name}.rss3</CardTitle>
+            <CardDescription>Get your ID in one-click.</CardDescription>
+          </CardHeader>
+  
+          <CardContent>
+            <form>
+              <div className="grid items-center w-full gap-4">
+                {/* <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    value={name}
+                    placeholder="Name of your project"
+                    disabled
+                  />
+                </div> */}
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="duration">Duration</Label>
+                  <Input
+                    id="duration"
+                    placeholder="Set the duration"
+                    type="number"
+                    value={duration}
+                    min={365}
+                    onChange={(e) => {
+                      setDuration(parseInt(e.target.value));
+                    }}
+                  />
+                </div>
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="duration">Duration</Label>
-                <Input
-                  id="duration"
-                  placeholder="Set the duration"
-                  type="number"
-                  value={duration}
-                  min={365}
-                  onChange={(e) => {
-                    setDuration(parseInt(e.target.value));
-                  }}
-                />
-              </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <div></div>
-          {!address ? (
-            <ConnectButton />
-          ) : !isFetchingHash ? (
-            <Button
-              onClick={() => {
-                register();
-              }}
-            >
-              Confirm
-            </Button>
-          ) : null}
-        </CardFooter>
-      </Card>
+              <DurationPicker/>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <div></div>
+            {!address ? (
+              <ConnectButton />
+            ) : !isFetchingHash ? (
+              <Button
+                onClick={() => {
+                  register();
+                }}
+              >
+                Confirm
+              </Button>
+            ) : null}
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { Banner, Typography } from "@ensdomains/thorin";
+import { Banner, RecordItem, Typography } from "@ensdomains/thorin";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { UserProfile } from "@/components/Profile";
@@ -27,14 +27,28 @@ const Home: NextPage = () => {
         <meta property="twitter:title" content={titleContent} />
         <meta property="twitter:description" content={descriptionContent} />
       </Head>
-      <div className="flex items-center justify-center">
-        <div className="flex flex-col w-full gap-4 px-4">
-        <Typography fontVariant="extraLargeBold" style={{fontSize: '32px'}}>{domainString}</Typography>
+      <div className="bg-gray-50">
+        <div className="flex items-center justify-center">
+          <Typography
+            className="mx-auto w-1/2 my-2.5 pl-3"
+            fontVariant="extraLargeBold"
+            style={{
+              fontSize: "32px",
+              paddingTop: "20px",
+              paddingBottom: "20px",
+            }}
+          >
+            {domainString}
+          </Typography>
+        </div>
+        <div className="flex items-center justify-center">
+          <div className="mx-auto w-1/2 my-2.5">
             <UserProfile
               {...{
                 domainString,
               }}
             />
+          </div>
         </div>
       </div>
     </>

@@ -94,12 +94,12 @@ export const UserProfile = ({ domainString }: { domainString: string }) => {
   return (
     <>
       <Card>
-        <Profile address={address} />
+        <Profile address={address}/>
         <Typography fontVariant="extraLarge">{domainString}</Typography>
-        <Typography fontVariant="small">{name}</Typography>
+        <Typography fontVariant="small" style={{color: "gray"}}>{name} </Typography>
       </Card>
-      <Card>
-        <Typography fontVariant="large">Address:</Typography>
+      <Card className="my-3">
+        <Typography fontVariant="large" style={{color: "gray"}}>Address:</Typography>
         <div>
           {isLoading ? (
             "Loading..."
@@ -119,7 +119,7 @@ export const UserProfile = ({ domainString }: { domainString: string }) => {
             </RecordItem>
           )}
         </div>
-        <Typography fontVariant="large">Ownership:</Typography>
+        <Typography fontVariant="large" style={{color: "gray"}}>Ownership:</Typography>
         <RecordItem keyLabel="expiry" size="large" inline value={expiryDataStr}>
           {expiryDataStr}
         </RecordItem>
