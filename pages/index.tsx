@@ -15,30 +15,34 @@ import { Button } from "@/components/ui/button";
 
 const isETHaddress = ({ name }: { name: string }) => {
   if (!name) return ''
+  if(!/^[a-zA-Z0-9.]+$/.test(name)) return ''
   if (name.includes('.')) {
     let parts = name.split('.');
+    if (parts.length > 2) return ''
     let suffix = parts[parts.length-1];
-    if (suffix === 'rss3') return name
+    let base = parts[0];
+    if (suffix === 'rss3') return base
     return ''
   }
-  if(name.includes('\'')) return ''
-  return `${name}.rss3`
+  return name
 }
 
 const Home: NextPage = () => {
   const [name, setName] = useState("");
+
+  const baseAddr = isETHaddress({name});
+  const address = baseAddr+'.rss3';
+
   const { data: available, isFetching: isFetchingAvailable } = useReadContract({
     abi: registerContractInfo.abi,
     address: registerContractInfo.address as `0x${string}`,
     functionName: "available",
-    args: [name],
+    args: [baseAddr],
     query: {
-      enabled: !!name && name.length > 2,
+      enabled: !!baseAddr && baseAddr.length > 2,
       staleTime: 1000,
     },
   });
-
-  const address = isETHaddress({name});
  
   // var namehash = require("eth-ens-namehash");
   // const node = namehash.hash(name);
@@ -87,7 +91,7 @@ const Home: NextPage = () => {
         </div>
         <>
           {available && address &&(
-            <Link href={`/register?name=${name}`} className="flex items-center">
+            <Link href={`/register?name=${baseAddr}`} className="flex items-center">
               {address} is available to register
               <CheckIcon className="w-6 h-6 text-green-500" />
             </Link>

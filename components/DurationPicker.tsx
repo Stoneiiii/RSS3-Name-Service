@@ -6,14 +6,19 @@ import styled from "styled-components";
 
 // `
 
-const DurationPicker = () => {
-  const [days, setDays] = useState(365); // 初始值为1年（365天）
+interface DurationPickerProps {
+  days: number;
+  setDays: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const DurationPicker: React.FC<DurationPickerProps>  =  ({ days, setDays })  => {
+
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const decrementDays = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    setDays((prevDays) => Math.max(prevDays - 365, 365)); // 确保天数不会低于1天
+    setDays((prevDays: number) => Math.max(prevDays - 365, 365)); 
   };
 
   const incrementDays = (e: { preventDefault: () => void }) => {

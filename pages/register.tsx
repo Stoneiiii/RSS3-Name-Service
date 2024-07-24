@@ -12,12 +12,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import registerContractInfo from "@/lib/constants/contract/ETHRegistrarController.json";
 import resolverContractInfo from "@/lib/constants/contract/PublicResolver.json";
 import crypto from "crypto";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Slider, Typography } from "@ensdomains/thorin";
+import {
+  CountdownCircle,
+  Slider,
+  Spinner,
+  Typography,
+} from "@ensdomains/thorin";
 import DurationPicker from "@/components/DurationPicker";
 
 const DAYS = 24 * 60 * 60;
@@ -26,9 +31,15 @@ const Home: NextPage = () => {
   const { address } = useAccount();
   const { query } = useRouter();
   const { name } = query;
-  const { writeContract: writeCommitContract } = useWriteContract();
-  const { writeContract: writeRegisterContract, error } = useWriteContract();
+  const { writeContract: writeCommitContract, status: commitStatus } =
+    useWriteContract();
+  const {
+    writeContract: writeRegisterContract,
+    error,
+    status: regStatus,
+  } = useWriteContract();
   const [duration, setDuration] = useState(365);
+  const [wait70s, setwait70s] = useState(false);
   const salt = useMemo(() => "0x" + crypto.randomBytes(32).toString("hex"), []);
 
   const { data: hash, isFetching: isFetchingHash } = useReadContract({
@@ -45,8 +56,13 @@ const Home: NextPage = () => {
     args: [name, duration * DAYS],
   });
 
-  console.log("console error", error);
+  useEffect(() => {
+    if (commitStatus === "success" && regStatus === "idle") setwait70s(true);
+    else setwait70s(false);
+  });
 
+  console.log("console error", error);
+  console.log("commitStatus", commitStatus, "regStatus", regStatus);
   const register = () => {
     writeCommitContract(
       {
@@ -91,40 +107,32 @@ const Home: NextPage = () => {
             <CardTitle className="text-4xl">Register {name}.rss3</CardTitle>
             <CardDescription>Get your ID in one-click.</CardDescription>
           </CardHeader>
-  
+
           <CardContent>
-            <form>
-              <div className="grid items-center w-full gap-4">
-                {/* <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    value={name}
-                    placeholder="Name of your project"
-                    disabled
-                  />
-                </div> */}
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="duration">Duration</Label>
-                  <Input
-                    id="duration"
-                    placeholder="Set the duration"
-                    type="number"
-                    value={duration}
-                    min={365}
-                    onChange={(e) => {
-                      setDuration(parseInt(e.target.value));
-                    }}
-                  />
-                </div>
-              </div>
-              <DurationPicker/>
-            </form>
+            <DurationPicker days={duration} setDays={setDuration} />
           </CardContent>
-          <CardFooter className="flex justify-between">
+          <CardFooter className="flex items-center justify-center">
             <div></div>
             {!address ? (
               <ConnectButton />
+            ) : wait70s ? (
+              <CountdownCircle
+                countdownSeconds={75}
+                callback={() => {
+                  setwait70s(false);
+                }}
+              />
+            ) : regStatus === "success" ? (
+              <Typography
+                fontVariant="large"
+                style={{ color: "rgb(59, 130, 246)" }}
+              >
+                Success!
+              </Typography>
+            ) : regStatus === "error" ? (
+              <Typography fontVariant="large" style={{ color: "red" }}>
+                Fail! Please refresh and try again.
+              </Typography>
             ) : !isFetchingHash ? (
               <Button
                 onClick={() => {
