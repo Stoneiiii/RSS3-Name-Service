@@ -24,6 +24,7 @@ import {
   Typography,
 } from "@ensdomains/thorin";
 import DurationPicker from "@/components/DurationPicker";
+import { MyHearder } from "@/components/MyHeader";
 
 const DAYS = 24 * 60 * 60;
 
@@ -93,57 +94,67 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="flex-col items-center justify-center w-full h-screen pt-10 bg-gray-50">
-      <Typography
-        className="w-2/3 mx-auto pl-3"
-        fontVariant="extraLargeBold"
-        style={{ fontSize: "32px", paddingTop: "20px", paddingBottom: "20px" }}
-      >
-        {name}.rss3
-      </Typography>
-      <div className="flex items-center justify-center w-full pt-4">
-        <Card className="w-2/3 px-8">
-          <CardHeader>
-            <CardTitle className="text-4xl">Register {name}.rss3</CardTitle>
-            <CardDescription>Get your ID in one-click.</CardDescription>
-          </CardHeader>
+    <div>
+      <header className="bg-gray-50">
+        <MyHearder />
+      </header>
+      <div className="flex-col items-center justify-center w-full h-screen pt-3 bg-gray-50">
+        <Typography
+          className="w-2/3 mx-auto pl-3"
+          fontVariant="extraLargeBold"
+          style={{
+            fontSize: "32px",
+            paddingTop: "20px",
+            paddingBottom: "20px",
+          }}
+        >
+          {name}.rss3
+        </Typography>
+        <div className="flex items-center justify-center w-full pt-4">
+          <Card className="w-2/3 px-8">
+            <CardHeader>
+              <CardTitle className="text-4xl">Register {name}.rss3</CardTitle>
+              <CardDescription>Get your ID in one-click.</CardDescription>
+            </CardHeader>
 
-          <CardContent>
-            <DurationPicker days={duration} setDays={setDuration} />
-          </CardContent>
-          <CardFooter className="flex items-center justify-center">
-            <div></div>
-            {!address ? (
-              <ConnectButton />
-            ) : wait70s ? (
-              <CountdownCircle
-                countdownSeconds={75}
-                callback={() => {
-                  setwait70s(false);
-                }}
-              />
-            ) : regStatus === "success" ? (
-              <Typography
-                fontVariant="large"
-                style={{ color: "rgb(59, 130, 246)" }}
-              >
-                Success!
-              </Typography>
-            ) : regStatus === "error" ? (
-              <Typography fontVariant="large" style={{ color: "red" }}>
-                Fail! Please refresh and try again.
-              </Typography>
-            ) : !isFetchingHash ? (
-              <Button
-                onClick={() => {
-                  register();
-                }}
-              >
-                Confirm
-              </Button>
-            ) : null}
-          </CardFooter>
-        </Card>
+            <CardContent>
+              <DurationPicker days={duration} setDays={setDuration} />
+            </CardContent>
+            <CardFooter className="flex items-center justify-center">
+              <div></div>
+              {!address ? (
+                <ConnectButton />
+              ) : wait70s ? (
+                <CountdownCircle
+                  countdownSeconds={75}
+                  callback={() => {
+                    setwait70s(false);
+                  }}
+                />
+              ) : regStatus === "success" ? (
+                <Typography
+                  fontVariant="large"
+                  style={{ color: "rgb(59, 130, 246)" }}
+                >
+                  Success!
+                </Typography>
+              ) : regStatus === "error" ? (
+                <Typography fontVariant="large" style={{ color: "red" }}>
+                  Fail! Please refresh and try again.
+                </Typography>
+              ) : !isFetchingHash ? (
+                <Button
+                  onClick={() => {
+                    register();
+                  }}
+                  disabled={commitStatus==="pending"}
+                >
+                  Confirm
+                </Button>
+              ) : null}
+            </CardFooter>
+          </Card>
+        </div>
       </div>
     </div>
   );

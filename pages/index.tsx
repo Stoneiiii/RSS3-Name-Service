@@ -11,27 +11,32 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import EnsAddress from "@/components/EnsAddress";
 import { Button } from "@/components/ui/button";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { MyHearder } from "@/components/MyHeader";
+import Head from "next/head";
+import { Profile, Typography } from "@ensdomains/thorin";
+import styled from "styled-components";
 // import namehash from 'eth-ens-namehash';
 
 const isETHaddress = ({ name }: { name: string }) => {
-  if (!name) return ''
-  if(!/^[a-zA-Z0-9.]+$/.test(name)) return ''
-  if (name.includes('.')) {
-    let parts = name.split('.');
-    if (parts.length > 2) return ''
-    let suffix = parts[parts.length-1];
+  if (!name) return "";
+  if (!/^[a-zA-Z0-9.]+$/.test(name)) return "";
+  if (name.includes(".")) {
+    let parts = name.split(".");
+    if (parts.length > 2) return "";
+    let suffix = parts[parts.length - 1];
     let base = parts[0];
-    if (suffix === 'rss3') return base
-    return ''
+    if (suffix === "rss3") return base;
+    return "";
   }
-  return name
-}
+  return name;
+};
 
 const Home: NextPage = () => {
   const [name, setName] = useState("");
 
-  const baseAddr = isETHaddress({name});
-  const address = baseAddr+'.rss3';
+  const baseAddr = isETHaddress({ name });
+  const address = baseAddr + ".rss3";
 
   const { data: available, isFetching: isFetchingAvailable } = useReadContract({
     abi: registerContractInfo.abi,
@@ -43,67 +48,76 @@ const Home: NextPage = () => {
       staleTime: 1000,
     },
   });
- 
-  // var namehash = require("eth-ens-namehash");
-  // const node = namehash.hash(name);
 
-  // console.log("resolverAddress", resolverAddress)
-  // console.log("error", error)
-
-  // const { data, isFetching: isFetching } = useReadContract({
-  //   abi: resolverInfo.abi,
-  //   address: resolverInfo.address as `0x${string}`,
-  //   functionName: "addr",
-  //   args: [node],
-  // });
-  // console.log("##", data);
+  console.log("##", baseAddr);
 
   return (
-    <div className="flex items-center justify-center w-full h-screen">
-      <div className="flex flex-col w-full gap-4 px-4 max-w-80">
-        <div className="flex items-center justify-center h-6">
-          {!!name && name.length > 2 && (
-            <Badge
-              variant={
-                isFetchingAvailable
-                  ? "outline"
-                  : available
-                  ? "default"
-                  : "destructive"
-              }
-            >
-              {isFetchingAvailable
-                ? "Loading..."
-                : available && !!address
-                ? "Available"
-                : "Not Supported"}
-            </Badge>
-          )}
+    <>
+      <Head>
+        <title>RSS3 Name Service</title>
+      </Head>
+      <div className="bg-gray-50">
+        <MyHearder />
+        <div className="flex items-center justify-center w-full">
+          <div className="flex flex-col w-full gap-4 px-4 py-12">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                Your web3 username
+              </h1>
+              <p className="mt-4 text-lg text-gray-400">
+                Your identity across web3, one name for all your crypto
+                addresses,
+                <br />
+                and your decentralised website.
+              </p>
+            </div>
+            <div className="flex flex-row items-center justify-center w-full gap-4 pt-0">
+              <Input
+                className="w-1/2 h-20 py-2 text-4xl placeholder-opacity-65 text-black bg-white border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                placeholder="Search for a name..."
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-center space-x-10">
+              <div>
+                {!available && baseAddr.length > 2 ? (
+                  <EnsAddress address={address} />
+                ) : baseAddr.length > 2 ? (
+                  <Profile style={{background: 'transparent'}} address="" ensName={address}/>
+                ) : name.length>2 ?(
+                  <Profile style={{background: 'transparent'}} address="" ensName={name}/>
+                ): ""}
+              </div>
+              <div className="flex-row my-2">
+                <>
+                  {baseAddr.length > 2 ? (
+                    <Typography fontVariant="extraLarge" className="pt-0.5">
+                             {isFetchingAvailable ? (
+                        ""
+                      ) : available && !!baseAddr ? (
+                        <Link
+                          href={`/register?name=${baseAddr}`}
+                          className="flex items-center text-green-500 px-3 bg-green-50 rounded-2xl"
+                        >
+                          Available
+                        </Link>
+                      ) : (<Link href={`/info?domain=${address}`} className="text-blue-400 px-3 bg-blue-50 rounded-2xl">Registered</Link>
+                      )}
+                    </Typography>
+                  ): !!name? (
+                  <Typography fontVariant="extraLarge" className="pb-0.5 text-xl bg-red-50 px-3 rounded-2xl" style={{color: "#ff0000cf"}}>
+                    {name.length<=2 ? "Too Short":"Not Supported"}
+                  </Typography>
+                  ):null}
+                </>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-row items-center justify-between w-full gap-4">
-          <Input
-            className="w-full"
-            placeholder="Search for a name..."
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-          />
-        </div>
-        <>
-          {available && address &&(
-            <Link href={`/register?name=${baseAddr}`} className="flex items-center">
-              {address} is available to register
-              <CheckIcon className="w-6 h-6 text-green-500" />
-            </Link>
-          )}
-          {!available &&
-            available != undefined &&
-            !!name &&
-            name.length > 2 && <EnsAddress address={address} />}
-        </>
-        <div className="h-24"></div>
       </div>
-    </div>
+    </>
   );
 };
 
