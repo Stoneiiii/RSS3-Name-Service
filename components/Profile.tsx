@@ -3,7 +3,9 @@ import { Card, Profile, RecordItem, Typography } from "@ensdomains/thorin";
 import Head from "next/head";
 import { useEffect, useMemo } from "react";
 import { useReadContract } from "wagmi";
-// import rss3Icon from './assets/rss3.jpg';
+import Image from 'next/image';
+import rss3icon from "../assets/rss3.png";
+import { SocialText } from "./SocialText";
 
 export const useNameDetails = ({ domainString }: { domainString: string }) => {
   // get address
@@ -99,6 +101,7 @@ export const UserProfile = ({ domainString }: { domainString: string }) => {
         <Typography fontVariant="small" style={{color: "gray"}}>{name} </Typography>
       </Card>
       <Card className="my-3">
+        <SocialText domainString={domainString}/>   
         <Typography fontVariant="large" style={{color: "gray"}}>Address:</Typography>
         <div>
           {isLoading ? (
@@ -106,11 +109,12 @@ export const UserProfile = ({ domainString }: { domainString: string }) => {
           ) : (
             <RecordItem
               icon={
-                <img
-                  src="https://pbs.twimg.com/profile_images/1763725067853168640/uKoowcdG_400x400.jpg"
-                  alt="rss3 Icon"
-                  style={{ width: "20px", height: "20px" }}
-                />
+                <Image
+            src={rss3icon}
+            alt="icon"
+            width={20}
+            height={20}
+          />
               }
               inline
               value={address}

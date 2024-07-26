@@ -5,6 +5,7 @@ import { UserProfile } from "@/components/Profile";
 import Head from "next/head";
 import { fontSizes } from "@ensdomains/thorin/dist/types/tokens/typography";
 import { MyHearder } from "@/components/MyHeader";
+import { SocialText } from "@/components/SocialText";
 
 const Home: NextPage = () => {
   const { query } = useRouter();

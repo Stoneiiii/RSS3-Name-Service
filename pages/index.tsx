@@ -16,7 +16,7 @@ import { MyHearder } from "@/components/MyHeader";
 import Head from "next/head";
 import { Profile, Typography } from "@ensdomains/thorin";
 import styled from "styled-components";
-// import namehash from 'eth-ens-namehash';
+import { useAccount } from "wagmi";
 
 const isETHaddress = ({ name }: { name: string }) => {
   if (!name) return "";
@@ -34,6 +34,7 @@ const isETHaddress = ({ name }: { name: string }) => {
 
 const Home: NextPage = () => {
   const [name, setName] = useState("");
+  const [isOwner, setIsOwner] = useState("");
 
   const baseAddr = isETHaddress({ name });
   const address = baseAddr + ".rss3";
@@ -49,7 +50,22 @@ const Home: NextPage = () => {
     },
   });
 
-  console.log("##", baseAddr);
+
+  // get primary name
+  const { address:myAddr } = useAccount();
+  
+
+  // var namehash = require("eth-ens-namehash");
+  // const node = namehash.hash("582FA1C74d3C071d10E4e83F1397124DE3B2a5fe");
+  // console.log("namehash",myAddr)
+  // const { data, isError } = useReadContract({
+  //   abi: resolverInfo.abi,
+  //   address: resolverInfo.address as `0x${string}`,
+  //   functionName: "name",
+  //   args: [node],
+  // });
+
+  // console.log("domain",data,isError)
 
   return (
     <>
@@ -83,7 +99,7 @@ const Home: NextPage = () => {
             <div className="flex items-center justify-center space-x-10">
               <div>
                 {!available && baseAddr.length > 2 ? (
-                  <EnsAddress address={address} />
+                  <EnsAddress address={address} isOwner={isOwner} setIsOwner={setIsOwner}/>
                 ) : baseAddr.length > 2 ? (
                   <Profile style={{background: 'transparent'}} address="" ensName={address}/>
                 ) : name.length>2 ?(
@@ -103,8 +119,13 @@ const Home: NextPage = () => {
                         >
                           Available
                         </Link>
-                      ) : (<Link href={`/info?domain=${address}`} className="text-blue-400 px-3 bg-blue-50 rounded-2xl">Registered</Link>
-                      )}
+                      ) : isOwner!=myAddr ? 
+                      (<Link href={`/info?domain=${address}`} className="text-blue-400 px-3 bg-blue-50 rounded-2xl">Registered</Link>
+                      ) :
+                      (<><Link href={`/setting?address=${isOwner}&domain=${address}`} className="text-blue-400 px-3 bg-blue-50 rounded-2xl mr-3">Manage</Link>
+                      <Link href={`/info?domain=${address}`} className="text-blue-400 px-3 bg-blue-50 rounded-2xl">Registered</Link></>
+                      )
+                    }
                     </Typography>
                   ): !!name? (
                   <Typography fontVariant="extraLarge" className="pb-0.5 text-xl bg-red-50 px-3 rounded-2xl" style={{color: "#ff0000cf"}}>
