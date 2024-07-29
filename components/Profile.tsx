@@ -100,7 +100,7 @@ export const UserProfile = ({ domainString }: { domainString: string }) => {
         <Typography fontVariant="extraLarge">{domainString}</Typography>
         <Typography fontVariant="small" style={{color: "gray"}}>{name} </Typography>
       </Card>
-      <Card className="my-3">
+      <Card className="my-3" >
         <SocialText domainString={domainString}/>   
         <Typography fontVariant="large" style={{color: "gray"}}>Address:</Typography>
         <div>
