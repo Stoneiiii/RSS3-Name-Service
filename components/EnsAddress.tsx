@@ -61,7 +61,7 @@ const EnsAddress: React.FC<EnsAddressProps> = ({
         {data == myAddr ? (
           <>
             {setIsOwner(data as string)}
-            <Link href={`/setting?domain=${data}`}>
+            <Link href={`/setting?address=${isOwner}&domain=${address}`}>
               <Profile
                 style={{ background: "transparent" }}
                 address={data as string}

@@ -7,6 +7,8 @@ import resolverInfo from "@/lib/constants/contract/PublicResolver.json";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button, Card, Heading, Input } from "@ensdomains/thorin";
 import { ChangeEvent, useEffect, useState } from "react";
+import useEnsText from "@/components/hooks/useText";
+import { SettingInput } from "@/components/SettingInput";
 
 interface NewText {
   [key: string]: string;
@@ -36,10 +38,13 @@ const Home: NextPage = () => {
 // console.log("^^^", domainString);
     //the domain is not belong to you
   useEffect(() => {
-    if (address != myaddr) {
+    if (address && myaddr&& address != myaddr) {
       router.push('/'); 
     }
   }, [address, myaddr, router]);
+
+  console.log(address,myaddr)
+
 
   const [newText, setNewText] = useState<NewText>({
     "com.website": "",
@@ -89,7 +94,16 @@ const Home: NextPage = () => {
       }
     }
   };
+  
+  useEffect(() => {
+    if (status === 'success') {
+      router.reload();
+    }
+  }, [status]);
 
+  if (address === undefined || myaddr === undefined) {
+    return null;
+  }
 
 
   return (
@@ -113,7 +127,7 @@ const Home: NextPage = () => {
                     {
                       label: "Website",
                       name: "com.website",
-                      key: "url",
+                      key: "com.website",
                       type: "text",
                     },
                     {
@@ -162,16 +176,13 @@ const Home: NextPage = () => {
                           {field.key}
                         </label>
                       </div>
-                      <Input
-                        hideLabel
-                        clearable
-                        label="Wallet Address"
-                        id={field.name}
-                        name={field.name}
-                        value={newText[field.name as keyof NewText]}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
-                        // placeholder={getText(field.name)}
+                      <SettingInput
+                        fieldName={field.name}
+                        newTextStr={newText[field.name as keyof NewText]}
+                        handleChange={handleChange}
+                        fieldKey={field.key}
+                        node={node}
+                        // placeholder={}
                       />
                     </div>
                   ))}

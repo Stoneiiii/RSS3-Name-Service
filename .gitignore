@@ -36,3 +36,10 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+.eslintrc.json
+.eslintrc.json
+.eslintrc.json
+.gitignore
+.prettierignore
+.gitignore
+.eslintrc.json
